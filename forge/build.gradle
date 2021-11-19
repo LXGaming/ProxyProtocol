@@ -1,0 +1,118 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "minecraftforge"
+            url = "https://maven.minecraftforge.net/"
+        }
+        maven {
+            name = "spongepowered"
+            url = "https://repo.spongepowered.org/repository/maven-public"
+        }
+    }
+
+    dependencies {
+        classpath("net.minecraftforge.gradle:ForgeGradle:4.1.+")
+        classpath("org.spongepowered:mixingradle:0.7-SNAPSHOT")
+    }
+}
+
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "net.minecraftforge.gradle"
+apply plugin: "org.spongepowered.mixin"
+
+archivesBaseName = "ProxyProtocol-Forge"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+minecraft {
+    mappings(channel: "official", version: "1.16.5")
+    runs {
+        client = {
+            args("--mixin.config", "mixins.proxyprotocol.core.json")
+            args("--mixin.config", "mixins.proxyprotocol.forge.json")
+            args("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            properties("forge.logging.console.level": "debug")
+            properties("forge.logging.markers": "SCAN,REGISTRIES,REGISTRYDUMP")
+            singleInstance(true)
+            workingDirectory(project.file("run"))
+        }
+
+        server = {
+            args("--mixin.config", "mixins.proxyprotocol.core.json")
+            args("--mixin.config", "mixins.proxyprotocol.forge.json")
+            args("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker", "nogui")
+            properties("forge.logging.console.level": "debug")
+            properties("forge.logging.markers": "SCAN,REGISTRIES,REGISTRYDUMP")
+            singleInstance(true)
+            workingDirectory(project.file("run"))
+        }
+    }
+}
+
+mixin {
+    disableRefMapWarning = true
+    add(sourceSets.main, "mixins.proxyprotocol.refmap.json")
+}
+
+configurations {
+    shadow {
+        runtimeOnly.extendsFrom(shadow)
+    }
+}
+
+repositories {
+}
+
+dependencies {
+    shadow(project(path: ":proxyprotocol-common"))
+    minecraft("net.minecraftforge:forge:1.16.5-36.2.9")
+    annotationProcessor("org.spongepowered:mixin:0.8.4:processor")
+}
+
+build {
+    build.dependsOn("signJar")
+}
+
+compileJava {
+    dependsOn(":proxyprotocol-common:build")
+}
+
+jar {
+    enabled = false
+    dependsOn("shadowJar")
+    manifest {
+        attributes(
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Implementation-Title": "ProxyProtocol",
+                "Implementation-Vendor": "LX_Gaming",
+                "Implementation-Version": "${project.version}",
+                "MixinConfigs": "mixins.proxyprotocol.core.json,mixins.proxyprotocol.forge.json",
+                "Specification-Title": "proxyprotocol",
+                "Specification-Vendor": "LX_Gaming",
+                "Specification-Version": "1"
+        )
+    }
+}
+
+processResources {
+    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
+    from (sourceSets.main.resources.srcDirs) {
+        include("META-INF/mods.toml")
+        expand("version": version)
+    }
+}
+
+reobf {
+    shadowJar {
+    }
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+    configurations = [project.configurations.shadow]
+}

@@ -1,0 +1,9 @@
+include "common"
+include "forge"
+
+[
+    "common",
+    "forge"
+].each {
+    findProject(":$it")?.name = "proxyprotocol-$it"
+}

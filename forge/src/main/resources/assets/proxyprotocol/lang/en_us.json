@@ -1,0 +1,6 @@
+{
+  "proxyprotocol.config.disable-tags": "Disable Tags",
+  "proxyprotocol.config.forwarding-channel": "Forwarding Channel",
+  "proxyprotocol.config.forwarding-mode": "Forwarding Mode",
+  "proxyprotocol.config.secret": "Secret"
+}

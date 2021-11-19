@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.lxgaming.proxyprotocol.forge.mixin.core",
+  "refmap": "mixins.proxyprotocol.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "network.handshake.client.CHandshakePacketMixin",
+    "network.handshake.ServerHandshakeNetHandlerMixin",
+    "network.login.client.CCustomPayloadLoginPacketAccessor",
+    "network.login.server.SCustomPayloadLoginPacketAccessor",
+    "network.login.ServerLoginNetHandlerMixin",
+    "network.play.ServerPlayNetHandlerMixin",
+    "network.NetworkManagerMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+    "server.dedicated.DedicatedServerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "conformVisibility": true
+  }
+}
