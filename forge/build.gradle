@@ -70,7 +70,7 @@ repositories {
 
 dependencies {
     shadow(project(path: ":proxyprotocol-common"))
-    minecraft("net.minecraftforge:forge:1.16.5-36.2.26")
+    minecraft("net.minecraftforge:forge:1.16.5-36.2.35")
     annotationProcessor("org.spongepowered:mixin:0.8.4:processor")
 }
 
