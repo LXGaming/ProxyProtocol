@@ -75,7 +75,7 @@ dependencies {
 }
 
 build {
-    dependsOn("signJar")
+    finalizedBy("signJar")
 }
 
 compileJava {
